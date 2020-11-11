@@ -87,8 +87,8 @@ mkdir /mnt/share
 yum install samba
 smbpasswd -a $USER {rootroot}
 yum install cifs-utils
-smbclient -U $USER \\\\192.168.1.36\\dir
-mount -t cifs -o username=Everyone,password= //192.168.1.36/dir /mnt/share
+smbclient -U $USER \\\\IPv4\\dir #Enter your ip instead of IPv4
+mount -t cifs -o username=Everyone,password= //IPv4/dir /mnt/share
 
 16.
-echo "//192.168.1.36/dir	/mnt/share	cifs	user=Everyone,password=,ro	0 0" > /etc/fstab	
+echo "//IPv4/dir	/mnt/share	cifs	user=Everyone,password=,ro	0 0" > /etc/fstab	
