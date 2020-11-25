@@ -1,3 +1,104 @@
 1.
 yum groupinstall "Development Tools"
 
+2.
+mkdir bastet
+cd bastet
+
+smbclient //192.168.1.36/LinuxLab
+get bastet-0.43.tgz
+quit
+
+tar -xzvf bastet.0.43.tgz
+cd bastet-0.43
+make
+yum install boost-devel
+yum install ncurses-devel ncurses
+make
+./bastet
+
+vi Makefile 
+"install:
+install ./bastet /usr/bin"
+
+make install
+
+3.
+dnf list --installed > ~/task.3.log
+
+4.
+dnf deplist gcc > ~/task4_1.log
+rpm -q --whatrequires libgcc > ~/task4_2.log
+
+5.
+mkdir ~/localrepo
+cd localrepo
+
+smbclient //192.168.1.36/Linuxlab
+get checkinstall-1.6.2-3.el6.1.x86_64.rpm
+quit
+
+yum install createrepo
+cd /etc/yum.repos.d
+vi localrepo.repo
+"[localrepo]
+name=localrepo
+baseurl=file:///root/localrepo/
+enabled=1
+gpgcheck=0"
+
+createrepo /root/localrepo
+
+6.
+dnf repolist --all | grep "enabled" > ~/task6.log
+
+7.
+cd /etc/yum.repos.d/
+for f in *; do mv "$f" "$(echo "$f" | sed s/repo/rep/)"; done
+mv localrep.rep localrepo.repo
+dnf list available
+rpm -i ~/localrepo/checkinstall-1.6.2-3.el6.1.x86_64.rpm
+
+8.
+cd ~
+smbclient //192.168.1.36/LinuxLab
+get fortunes-ru_1.52-2_all.deb
+quit
+
+cd /etc/yum.repos.d/
+for f in *; do mv "$f" "$(echo "$f" | sed s/s/rep/repo)"; done
+
+mkdir ~/alien
+cd ~/alien
+smbclient //192.168.1.36/LinuxLab
+get alien_8.95.tar.xz
+quit
+
+cd alien-8.95
+dnf install perl
+perl Makefile.PL; make; make install
+
+cd ~
+alien --to-rpm --scripts ./fortunes-ru_1.52-2_all.deb
+rpm -i --force fortunes-ru_1.52_3.noarch.rpm
+
+9.
+dnf download nano 
+
+dnf install https://extras.getpagespeed.com/release-el8-latast.rpm
+dnf install rpmrebuild
+
+rpmrebuild -enp nano-2.9.8-1.el8.x86_64.rpm
+"...
+Version: 2.9.8_newnano
+...
+...
+mv /usr/bin/nano /usr/bin/newnano
+%preun
+mv /usr/bin/newnano /usr/bin/nano"
+
+cd rpmrebuild/RPMS/x86_64/
+yum remove nano
+
+rpm -i nano-2.9.8_newnano-1.el8.x86_64.rpm
+
